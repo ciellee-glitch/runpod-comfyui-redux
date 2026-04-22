@@ -1,2 +1,2 @@
-FROM registry.runpod.net/runpod-workers-worker-comfyui-main-dockerfile:d2a557235
+FROM runpod/worker-comfyui:5.8.5-base
 COPY extra_model_paths.yaml /extra_model_paths.yaml
