@@ -21,4 +21,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ciellee78/worker-comfyui-redux:latest
+          tags: |
+            ciellee78/worker-comfyui-redux:latest
+            ciellee78/worker-comfyui-redux:v2
