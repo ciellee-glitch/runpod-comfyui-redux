@@ -1,2 +1,5 @@
 FROM runpod/worker-comfyui:5.8.5-base
-RUN python3 -c "c=open('/comfyui/extra_model_paths.yaml').read(); c=c.rstrip()+'\n  style_models: models/style_models/\n' if 'style_models' not in c else c; open('/comfyui/extra_model_paths.yaml','w').write(c); print(open('/comfyui/extra_model_paths.yaml').read())"
+RUN echo "=== /start.sh ===" && cat /start.sh && \
+    echo "=== patching ===" && \
+    sed -i '/unet: models\/unet/a\  style_models: models\/style_models\/' /start.sh && \
+    echo "=== after patch ===" && grep -A2 "unet: models" /start.sh
