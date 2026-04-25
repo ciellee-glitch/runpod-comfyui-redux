@@ -1,10 +1,2 @@
 FROM runpod/worker-comfyui:5.8.5-base
-
-# 注册 diffusion_models 路径（Kontext FP8 模型存放在此）
-RUN python3 -c "
-c = open('/comfyui/extra_model_paths.yaml').read()
-if 'diffusion_models' not in c:
-    c = c.rstrip() + '\n  diffusion_models: models/diffusion_models/\n'
-open('/comfyui/extra_model_paths.yaml', 'w').write(c)
-"
-# trigger kontext build
+RUN python3 -c "c=open('/comfyui/extra_model_paths.yaml').read();c=c.rstrip()+'\n  diffusion_models: models/diffusion_models/\n' if 'diffusion_models' not in c else c;open('/comfyui/extra_model_paths.yaml','w').write(c)"
