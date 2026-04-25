@@ -7,3 +7,4 @@ if 'diffusion_models' not in c:
     c = c.rstrip() + '\n  diffusion_models: models/diffusion_models/\n'
 open('/comfyui/extra_model_paths.yaml', 'w').write(c)
 "
+# trigger kontext build
