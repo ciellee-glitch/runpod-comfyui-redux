@@ -16,6 +16,7 @@ RUN python3 -c "import urllib.request, os; d='/comfyui/models/insightface/models
 RUN python3 -c "import onnx; d='/comfyui/models/insightface/models/antelopev2/'; m=onnx.load(d+'scrfd_10g_bnkps.onnx'); e=m.metadata_props.add(); e.key='taskname'; e.value='detection'; onnx.save(m,d+'scrfd_10g_bnkps.onnx'); m=onnx.load(d+'glintr100.onnx'); e=m.metadata_props.add(); e.key='taskname'; e.value='recognition'; onnx.save(m,d+'glintr100.onnx'); m=onnx.load(d+'1k3d68.onnx'); e=m.metadata_props.add(); e.key='taskname'; e.value='landmark_3d_68'; onnx.save(m,d+'1k3d68.onnx'); m=onnx.load(d+'2d106det.onnx'); e=m.metadata_props.add(); e.key='taskname'; e.value='landmark_2d_106'; onnx.save(m,d+'2d106det.onnx'); m=onnx.load(d+'genderage.onnx'); e=m.metadata_props.add(); e.key='taskname'; e.value='genderage'; onnx.save(m,d+'genderage.onnx'); print('all patched')"
 RUN python3 -c "c=open('/comfyui/extra_model_paths.yaml').read(); [c:=c.rstrip()+'\n  '+k+': '+v+'\n' for k,v in [('pulid','models/pulid/'),('text_encoders','models/text_encoders/'),('diffusion_models','models/diffusion_models/')] if k not in c]; open('/comfyui/extra_model_paths.yaml','w').write(c)"
 
-# 新版 ComfyUI 依赖（comfy_aimdo 是 AI Model Dynamic Offloader，master 分支已引入）
+# comfy-aimdo：0.3.0 起 vram_buffer 改为纯 Python+ctypes，import 不再依赖 C 扩展
+# base image 已有 0.2.12，必须加 --upgrade 才会更新到 0.3.0
 # 必须用 /opt/venv/bin/pip，否则装到系统 Python，ComfyUI 的 venv 找不到
-RUN /opt/venv/bin/pip install comfy-aimdo bitsandbytes
+RUN /opt/venv/bin/pip install --upgrade comfy-aimdo bitsandbytes
