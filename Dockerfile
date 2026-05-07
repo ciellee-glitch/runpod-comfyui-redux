@@ -5,6 +5,9 @@ ENV HF_HOME=/workspace/hf_cache
 
 RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ python3-dev
 RUN cd /comfyui && git fetch origin master && git reset --hard origin/master
+# comfy_aimdo.vram_buffer 是 C 扩展，PyPI 轮子可能未针对当前 CUDA 版本编译
+# import 失败时将 aimdo_enabled 置 False，ComfyUI 回退默认 VRAM 管理（H100 80GB 完全够用）
+RUN python3 -c "f='/comfyui/comfy/model_management.py';c=open(f).read();c=c.replace('import comfy_aimdo.vram_buffer','try:\n    import comfy_aimdo.vram_buffer\nexcept (ImportError,ModuleNotFoundError):\n    comfy.memory_management.aimdo_enabled=False');open(f,'w').write(c)"
 RUN rm -rf /comfyui/custom_nodes/ComfyUI-PuLID-Flux && git clone https://github.com/balazik/ComfyUI-PuLID-Flux /comfyui/custom_nodes/ComfyUI-PuLID-Flux && pip install -r /comfyui/custom_nodes/ComfyUI-PuLID-Flux/requirements.txt && pip install insightface==0.7.3 && python3 -c "import re; f='/comfyui/custom_nodes/ComfyUI-PuLID-Flux/pulidflux.py'; c=open(f).read(); c=re.sub(r',\s*providers=\[provider \+ .ExecutionProvider.,\]', '', c); c=re.sub(r'(control=None,)\s*\)\s*->\s*Tensor:', r'\1 **kwargs) -> Tensor:', c); open(f,'w').write(c)"
 
 # 预下载 facexlib 权重，避免运行时从 GitHub 下载失败
