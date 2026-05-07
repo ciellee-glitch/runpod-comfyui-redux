@@ -14,4 +14,5 @@ RUN python3 -c "import onnx; d='/comfyui/models/insightface/models/antelopev2/';
 RUN python3 -c "c=open('/comfyui/extra_model_paths.yaml').read(); [c:=c.rstrip()+'\n  '+k+': '+v+'\n' for k,v in [('pulid','models/pulid/'),('text_encoders','models/text_encoders/'),('diffusion_models','models/diffusion_models/')] if k not in c]; open('/comfyui/extra_model_paths.yaml','w').write(c)"
 
 # 新版 ComfyUI 依赖（comfy_aimdo 是 AI Model Dynamic Offloader，master 分支已引入）
-RUN pip install comfy-aimdo bitsandbytes
+# 必须用 /opt/venv/bin/pip，否则装到系统 Python，ComfyUI 的 venv 找不到
+RUN /opt/venv/bin/pip install comfy-aimdo bitsandbytes
