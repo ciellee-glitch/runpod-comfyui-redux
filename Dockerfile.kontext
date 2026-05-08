@@ -1,2 +1,3 @@
 FROM runpod/worker-comfyui:5.8.5-base
 RUN python3 -c "c=open('/comfyui/extra_model_paths.yaml').read();c=c.rstrip()+'\n  diffusion_models: models/diffusion_models/\n' if 'diffusion_models' not in c else c;open('/comfyui/extra_model_paths.yaml','w').write(c)"
+RUN cd /comfyui && git fetch origin master && git reset --hard origin/master
