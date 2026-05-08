@@ -1,4 +1,4 @@
 FROM ciellee78/worker-comfyui-kontext:v1
 RUN git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux \
-    /workspace/ComfyUI/custom_nodes/comfyui_controlnet_aux && \
-    /opt/venv/bin/pip install -r /workspace/ComfyUI/custom_nodes/comfyui_controlnet_aux/requirements.txt
+    /comfyui/custom_nodes/comfyui_controlnet_aux && \
+    /opt/venv/bin/pip install -r /comfyui/custom_nodes/comfyui_controlnet_aux/requirements.txt
