@@ -1,0 +1,35 @@
+import os
+import numpy as np
+from PIL import Image
+import folder_paths
+
+
+class SaveImageJPEG:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {
+            "images": ("IMAGE",),
+            "filename_prefix": ("STRING", {"default": "output"}),
+            "quality": ("INT", {"default": 90, "min": 1, "max": 100, "step": 1}),
+        }}
+
+    RETURN_TYPES = ()
+    FUNCTION = "save_images"
+    OUTPUT_NODE = True
+    CATEGORY = "image"
+
+    def save_images(self, images, filename_prefix="output", quality=90):
+        output_dir = folder_paths.get_output_directory()
+        os.makedirs(output_dir, exist_ok=True)
+        results = []
+        for i, img in enumerate(images):
+            arr = (img.cpu().numpy() * 255).clip(0, 255).astype("uint8")
+            pil_img = Image.fromarray(arr)
+            filename = f"{filename_prefix}_{i:05d}_.jpg"
+            pil_img.save(os.path.join(output_dir, filename), "JPEG", quality=quality)
+            results.append({"filename": filename, "subfolder": "", "type": "output"})
+        return {"ui": {"images": results}}
+
+
+NODE_CLASS_MAPPINGS = {"SaveImageJPEG": SaveImageJPEG}
+NODE_DISPLAY_NAME_MAPPINGS = {"SaveImageJPEG": "Save Image (JPEG)"}
