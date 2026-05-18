@@ -24,4 +24,4 @@ jobs:
           context: .
           file: ./Dockerfile.supir
           push: true
-          tags: ciellee78/worker-comfyui-supir:v6
+          tags: ciellee78/worker-comfyui-supir:v7

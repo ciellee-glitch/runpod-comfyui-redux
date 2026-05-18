@@ -1,8 +1,12 @@
 FROM ciellee78/worker-comfyui-redux:v7
 
-# 克隆 kijai/ComfyUI-SUPIR，故意不 pip install，验证是否依赖冲突导致崩溃
+# 安装 kijai/ComfyUI-SUPIR 自定义节点
 RUN git clone --depth 1 https://github.com/kijai/ComfyUI-SUPIR \
     /comfyui/custom_nodes/ComfyUI-SUPIR
+
+# 只装 inference 所需依赖，跳过 pytorch-lightning（训练用，isatty crash 根源）
+# 及 accelerate（可选），避免依赖冲突导致容器崩溃
+RUN /opt/venv/bin/pip install "open-clip-torch>=2.24.0" omegaconf
 
 # 复制 SaveImageJPEG 节点（规避 RunPod API 响应体大小限制）
 COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
