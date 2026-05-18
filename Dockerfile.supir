@@ -4,9 +4,19 @@ FROM ciellee78/worker-comfyui-redux:v7
 RUN git clone --depth 1 https://github.com/kijai/ComfyUI-SUPIR \
     /comfyui/custom_nodes/ComfyUI-SUPIR
 
-# 只装 inference 所需依赖，跳过 pytorch-lightning（训练用，isatty crash 根源）
-# 及 accelerate（可选），避免依赖冲突导致容器崩溃
-RUN /opt/venv/bin/pip install "open-clip-torch>=2.24.0" omegaconf
+# 关键修复：sgm/__init__.py 在 import 时 eager 加载 DiffusionEngine
+# → 触发 sgm/models/diffusion.py → import pytorch_lightning（硬依赖，无 try/except）
+# → 无论 pytorch_lightning 是否安装，都导致 ComfyUI 启动额外耗时 15-20s，触发 RunPod 超时崩溃
+# SUPIR 推理节点通过 instantiate_from_config 动态加载模型类，不需要 __init__.py 里的 eager import
+RUN printf 'from .util import get_configs_path, instantiate_from_config\n__version__ = "0.1.0"\n' \
+    > /comfyui/custom_nodes/ComfyUI-SUPIR/sgm/__init__.py
+
+# 安装推理依赖（pytorch-lightning 推理时 instantiate_from_config 动态加载 DiffusionEngine 需要）
+RUN /opt/venv/bin/pip install \
+    "open-clip-torch>=2.24.0" \
+    omegaconf \
+    "pytorch-lightning>=2.5.5" \
+    accelerate
 
 # 复制 SaveImageJPEG 节点（规避 RunPod API 响应体大小限制）
 COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
