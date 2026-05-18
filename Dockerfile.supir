@@ -1,16 +1,10 @@
 FROM ciellee78/worker-comfyui-redux:v7
 
-# 诊断：打印启动脚本内容，找到超时阈值
-RUN echo "=== ROOT FILES ===" && ls -la / | head -30
-RUN echo "=== LOOKING FOR START SCRIPTS ===" && \
-    for f in /start.sh /startup.sh /docker-entrypoint.sh /entrypoint.sh /run.sh; do \
-        if [ -f "$f" ]; then echo "FOUND: $f" && cat "$f"; fi; \
-    done
-RUN echo "=== HANDLER FILES ===" && \
-    find / -maxdepth 4 -name "handler.py" -o -name "rp_handler.py" -o -name "worker.py" 2>/dev/null | \
-    xargs -I{} sh -c 'echo "=== {} ===" && head -60 {}'
-RUN echo "=== CMD CHECK ===" && \
-    cat /proc/1/cmdline 2>/dev/null | tr '\0' ' ' || true
+# 诊断：把 ComfyUI stdout 同时写到网络卷，容器 crash 后从 redux endpoint 读取
+# exec 保持 PID 不变，handler.py 的 PID 监控不受影响
+RUN printf '#!/bin/bash\nmkdir -p /workspace/debug\nexec python -u /comfyui/main.py "$@" 2>&1 | tee /workspace/debug/comfyui_startup.log\n' \
+    > /comfyui_start_logged.sh && chmod +x /comfyui_start_logged.sh
+RUN sed -i 's|python -u /comfyui/main.py|/comfyui_start_logged.sh|g' /start.sh
 
 # 安装 kijai/ComfyUI-SUPIR 自定义节点
 RUN git clone --depth 1 https://github.com/kijai/ComfyUI-SUPIR \
