@@ -1,8 +1,8 @@
 FROM ciellee78/worker-comfyui-redux:v7
 
-# 诊断v11: 捕获整个 start.sh 输出（含 crash 前所有步骤）到网络卷
+# 诊断v12: 写到 /runpod-volume/debug/ (serverless 卷挂载点)
 RUN mv /start.sh /start_real.sh && \
-    printf '#!/bin/bash\nmkdir -p /workspace/debug\nexec /start_real.sh "$@" 2>&1 | tee /workspace/debug/startup.log\n' > /start.sh && \
+    printf '#!/bin/bash\nmkdir -p /runpod-volume/debug /workspace/debug\nexec /start_real.sh "$@" 2>&1 | tee /runpod-volume/debug/startup.log /workspace/debug/startup.log\n' > /start.sh && \
     chmod +x /start.sh
 
 # 安装 kijai/ComfyUI-SUPIR 自定义节点
