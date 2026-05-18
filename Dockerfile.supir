@@ -1,0 +1,9 @@
+FROM runpod/worker-comfyui:5.8.5-base
+
+# 安装 kijai/ComfyUI-SUPIR 自定义节点
+RUN git clone --depth 1 https://github.com/kijai/ComfyUI-SUPIR \
+    /comfyui/custom_nodes/ComfyUI-SUPIR && \
+    /opt/venv/bin/pip install -r /comfyui/custom_nodes/ComfyUI-SUPIR/requirements.txt
+
+# 复制 SaveImageJPEG 节点（规避 RunPod API 响应体大小限制）
+COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/

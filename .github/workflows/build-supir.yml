@@ -1,0 +1,26 @@
+name: Build SUPIR Image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Dockerfile.supir'
+      - 'save_jpeg/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.supir
+          push: true
+          tags: ciellee78/worker-comfyui-supir:v1
