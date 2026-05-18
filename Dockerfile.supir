@@ -1,22 +1,28 @@
 FROM ciellee78/worker-comfyui-redux:v7
 
+# 诊断：打印启动脚本内容，找到超时阈值
+RUN echo "=== ROOT FILES ===" && ls -la / | head -30
+RUN echo "=== LOOKING FOR START SCRIPTS ===" && \
+    for f in /start.sh /startup.sh /docker-entrypoint.sh /entrypoint.sh /run.sh; do \
+        if [ -f "$f" ]; then echo "FOUND: $f" && cat "$f"; fi; \
+    done
+RUN echo "=== HANDLER FILES ===" && \
+    find / -maxdepth 4 -name "handler.py" -o -name "rp_handler.py" -o -name "worker.py" 2>/dev/null | \
+    xargs -I{} sh -c 'echo "=== {} ===" && head -60 {}'
+RUN echo "=== CMD CHECK ===" && \
+    cat /proc/1/cmdline 2>/dev/null | tr '\0' ' ' || true
+
 # 安装 kijai/ComfyUI-SUPIR 自定义节点
 RUN git clone --depth 1 https://github.com/kijai/ComfyUI-SUPIR \
     /comfyui/custom_nodes/ComfyUI-SUPIR
 
-# 关键修复：sgm/__init__.py 在 import 时 eager 加载 DiffusionEngine
-# → 触发 sgm/models/diffusion.py → import pytorch_lightning（硬依赖，无 try/except）
-# → 无论 pytorch_lightning 是否安装，都导致 ComfyUI 启动额外耗时 15-20s，触发 RunPod 超时崩溃
-# SUPIR 推理节点通过 instantiate_from_config 动态加载模型类，不需要 __init__.py 里的 eager import
 RUN printf 'from .util import get_configs_path, instantiate_from_config\n__version__ = "0.1.0"\n' \
     > /comfyui/custom_nodes/ComfyUI-SUPIR/sgm/__init__.py
 
-# 安装推理依赖（pytorch-lightning 推理时 instantiate_from_config 动态加载 DiffusionEngine 需要）
 RUN /opt/venv/bin/pip install \
     "open-clip-torch>=2.24.0" \
     omegaconf \
     "pytorch-lightning>=2.5.5" \
     accelerate
 
-# 复制 SaveImageJPEG 节点（规避 RunPod API 响应体大小限制）
 COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
