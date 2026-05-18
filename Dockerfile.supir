@@ -6,17 +6,8 @@ RUN git clone --depth 1 https://github.com/kijai/ComfyUI-SUPIR \
     /opt/venv/bin/pip install -r /comfyui/custom_nodes/ComfyUI-SUPIR/requirements.txt
 
 # 诊断：测试 SUPIR 节点 import，build log 中可见错误
-RUN cd /comfyui && /opt/venv/bin/python -c "\
-import sys, os; \
-sys.path.insert(0, '/comfyui'); \
-sys.path.insert(0, '/comfyui/custom_nodes/ComfyUI-SUPIR'); \
-try: \
-    import nodes as supir_nodes; \
-    print('SUPIR NODE_CLASS_MAPPINGS:', list(supir_nodes.NODE_CLASS_MAPPINGS.keys())); \
-except Exception as e: \
-    import traceback; traceback.print_exc(); \
-    raise \
-"
+COPY test_supir_import.py /tmp/test_supir_import.py
+RUN cd /comfyui && /opt/venv/bin/python /tmp/test_supir_import.py
 
 # 复制 SaveImageJPEG 节点（规避 RunPod API 响应体大小限制）
 COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
