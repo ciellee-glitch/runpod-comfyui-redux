@@ -4,13 +4,11 @@ RUN git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux \
     /opt/venv/bin/pip install -r /comfyui/custom_nodes/comfyui_controlnet_aux/requirements.txt && \
     /opt/venv/bin/pip install -e /comfyui/custom_nodes/comfyui_controlnet_aux
 
-# 调试：读取各 detector __init__.py，确认 from_pretrained 使用的 HF repo 和文件名
+# 调试：读取 util.py 确认 custom_hf_download 路径和 DEPTH_ANYTHING_V2_MODEL_NAME_DICT
 RUN AUX=/comfyui/custom_nodes/comfyui_controlnet_aux/src/custom_controlnet_aux && \
-    echo "=== depth_anything_v2/__init__.py ===" && \
-    cat $AUX/depth_anything_v2/__init__.py && \
-    echo "=== hed/__init__.py ===" && \
-    cat $AUX/hed/__init__.py && \
-    echo "=== openpose/__init__.py ===" && \
-    cat $AUX/openpose/__init__.py | head -80
+    echo "=== util.py head-120 ===" && \
+    head -120 $AUX/util.py && \
+    echo "=== node_wrappers/openpose.py ===" && \
+    cat /comfyui/custom_nodes/comfyui_controlnet_aux/node_wrappers/openpose.py
 
 COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
