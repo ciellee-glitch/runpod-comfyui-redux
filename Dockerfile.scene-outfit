@@ -5,18 +5,6 @@ RUN git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux \
 
 # 预下载预处理器模型，消除冷启动时的实时下载（约800MB bake进镜像）
 RUN cd /comfyui/custom_nodes/comfyui_controlnet_aux && \
-    /opt/venv/bin/python -c "
-import sys
-sys.path.insert(0, '.')
-from custom_controlnet_aux.depth_anything_v2 import DepthAnythingV2Detector
-DepthAnythingV2Detector.from_pretrained('depth-anything/Depth-Anything-V2-Large')
-print('DepthAnythingV2 OK')
-from custom_controlnet_aux.hed import HEDdetector
-HEDdetector.from_pretrained('lllyasviel/Annotators')
-print('HED OK')
-from custom_controlnet_aux.open_pose import OpenposeDetector
-OpenposeDetector.from_pretrained('lllyasviel/ControlNet', 'lllyasviel/Annotators')
-print('OpenPose OK')
-"
+    /opt/venv/bin/python -c "import sys; sys.path.insert(0, '.'); from custom_controlnet_aux.depth_anything_v2 import DepthAnythingV2Detector; DepthAnythingV2Detector.from_pretrained('depth-anything/Depth-Anything-V2-Large'); print('DepthAnythingV2 OK'); from custom_controlnet_aux.hed import HEDdetector; HEDdetector.from_pretrained('lllyasviel/Annotators'); print('HED OK'); from custom_controlnet_aux.open_pose import OpenposeDetector; OpenposeDetector.from_pretrained('lllyasviel/ControlNet', 'lllyasviel/Annotators'); print('OpenPose OK')"
 
 COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
