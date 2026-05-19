@@ -34,7 +34,7 @@ cold start 时下载大文件会导致 RunPod 执行超时，所有 Dockerfile �
 ## Docker 镜像
 
 - Docker Hub：`ciellee78/worker-comfyui-redux`
-- 场景换装：`ciellee78/worker-comfyui-scene-outfit:v3`
+- 场景换装：`ciellee78/worker-comfyui-scene-outfit:v4`
 - GitHub Actions 触发：push 到 main 分支
 
 ## RunPod Endpoint
@@ -42,5 +42,5 @@ cold start 时下载大文件会导致 RunPod 执行超时，所有 Dockerfile �
 | 用途 | Endpoint ID | 镜像 |
 |------|-------------|------|
 | FLUX + Z-Image | `ia93wb3p0oh9kr` | `worker-comfyui-redux:v7` |
-| 场景换装 | `zeg37uzfpirfvs` | `worker-comfyui-scene-outfit:v3` |
+| 场景换装 | `zeg37uzfpirfvs` | `worker-comfyui-scene-outfit:v4` |
 | SUPIR 超分 | `8daqzktvsfe2aq` | `worker-comfyui-supir:v1` |
