@@ -1,14 +1,20 @@
 FROM ciellee78/worker-comfyui-redux:v7
+
 RUN git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux \
     /comfyui/custom_nodes/comfyui_controlnet_aux && \
     /opt/venv/bin/pip install -r /comfyui/custom_nodes/comfyui_controlnet_aux/requirements.txt && \
     /opt/venv/bin/pip install -e /comfyui/custom_nodes/comfyui_controlnet_aux
 
-# 调试：读取 util.py 确认 custom_hf_download 路径和 DEPTH_ANYTHING_V2_MODEL_NAME_DICT
-RUN AUX=/comfyui/custom_nodes/comfyui_controlnet_aux/src/custom_controlnet_aux && \
-    echo "=== util.py head-120 ===" && \
-    head -120 $AUX/util.py && \
-    echo "=== node_wrappers/openpose.py ===" && \
-    cat /comfyui/custom_nodes/comfyui_controlnet_aux/node_wrappers/openpose.py
+# 预下载 preprocessor 模型到 ckpts/，避免 cold start 时下载超时
+# custom_hf_download 只下文件，不 torch.load，无内存/CPU 压力
+RUN /opt/venv/bin/python - <<'EOF'
+import sys
+sys.path.insert(0, '/comfyui/custom_nodes/comfyui_controlnet_aux/src')
+from custom_controlnet_aux.util import custom_hf_download, HF_MODEL_NAME, DEPTH_ANYTHING_V2_MODEL_NAME_DICT
+custom_hf_download(HF_MODEL_NAME, 'ControlNetHED.pth')
+custom_hf_download(DEPTH_ANYTHING_V2_MODEL_NAME_DICT['depth_anything_v2_vitl.pth'], 'depth_anything_v2_vitl.pth')
+custom_hf_download(HF_MODEL_NAME, 'body_pose_model.pth')
+custom_hf_download(HF_MODEL_NAME, 'hand_pose_model.pth')
+EOF
 
 COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
