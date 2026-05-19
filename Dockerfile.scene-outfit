@@ -3,11 +3,12 @@ RUN git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux \
     /comfyui/custom_nodes/comfyui_controlnet_aux && \
     /opt/venv/bin/pip install -r /comfyui/custom_nodes/comfyui_controlnet_aux/requirements.txt
 
-# 调试：查看目录结构和已安装包
-RUN ls /comfyui/custom_nodes/comfyui_controlnet_aux/ && \
-    /opt/venv/bin/pip list 2>&1 | grep -i controlnet
-
-# 预下载预处理器模型，消除冷启动时的实时下载
-RUN /opt/venv/bin/python -c "import sys; sys.path.insert(0, '/comfyui/custom_nodes/comfyui_controlnet_aux'); from custom_controlnet_aux.depth_anything_v2 import DepthAnythingV2Detector; DepthAnythingV2Detector.from_pretrained('depth-anything/Depth-Anything-V2-Large'); print('DepthAnythingV2 OK'); from custom_controlnet_aux.hed import HEDdetector; HEDdetector.from_pretrained('lllyasviel/Annotators'); print('HED OK'); from custom_controlnet_aux.open_pose import OpenposeDetector; OpenposeDetector.from_pretrained('lllyasviel/ControlNet', 'lllyasviel/Annotators'); print('OpenPose OK')"
+# 调试：查看 requirements.txt 内容、node_wrappers 目录、depth_anything_v2 wrapper 前30行
+RUN echo "=== requirements.txt ===" && \
+    cat /comfyui/custom_nodes/comfyui_controlnet_aux/requirements.txt && \
+    echo "=== node_wrappers/ ===" && \
+    ls /comfyui/custom_nodes/comfyui_controlnet_aux/node_wrappers/ && \
+    echo "=== depth_anything_v2.py head ===" && \
+    head -30 /comfyui/custom_nodes/comfyui_controlnet_aux/node_wrappers/depth_anything_v2.py 2>/dev/null || true
 
 COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
