@@ -15,6 +15,9 @@ custom_hf_download(HF_MODEL_NAME, 'ControlNetHED.pth')
 custom_hf_download(DEPTH_ANYTHING_V2_MODEL_NAME_DICT['depth_anything_v2_vitl.pth'], 'depth_anything_v2_vitl.pth')
 custom_hf_download(HF_MODEL_NAME, 'body_pose_model.pth')
 custom_hf_download(HF_MODEL_NAME, 'hand_pose_model.pth')
+custom_hf_download(HF_MODEL_NAME, 'facenet.pth')
+from huggingface_hub import hf_hub_download
+hf_hub_download(repo_id='QuanSun/EVA-CLIP', filename='EVA02_CLIP_L_336_psz14_s6B.pt')
 EOF
 
 COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
