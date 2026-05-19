@@ -4,11 +4,11 @@ RUN git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux \
     /opt/venv/bin/pip install -r /comfyui/custom_nodes/comfyui_controlnet_aux/requirements.txt && \
     /opt/venv/bin/pip install -e /comfyui/custom_nodes/comfyui_controlnet_aux
 
-# 调试：读取 search_of_assets.py 和 depth_anything_v2.py（根目录版本）
-RUN head -80 /comfyui/custom_nodes/comfyui_controlnet_aux/search_of_assets.py 2>/dev/null || echo "no search_of_assets.py" && \
-    echo "=== root depth_anything_v2.py ===" && \
-    cat /comfyui/custom_nodes/comfyui_controlnet_aux/depth_anything_v2.py 2>/dev/null | head -60 || echo "no root depth_anything_v2.py" && \
-    echo "=== pyproject.toml ===" && \
-    cat /comfyui/custom_nodes/comfyui_controlnet_aux/pyproject.toml 2>/dev/null || echo "no pyproject.toml"
+# 调试：找到 custom_controlnet_aux 子包位置，读取 depth_anything_v2.py 实现
+RUN find /comfyui/custom_nodes/comfyui_controlnet_aux -maxdepth 2 -name "*.py" | sort && \
+    echo "=== custom_controlnet_aux/depth_anything_v2.py ===" && \
+    cat /comfyui/custom_nodes/comfyui_controlnet_aux/custom_controlnet_aux/depth_anything_v2.py 2>/dev/null || echo "not found" && \
+    echo "=== installed packages with controlnet ===" && \
+    (/opt/venv/bin/pip show comfyui-controlnet-aux 2>/dev/null || /opt/venv/bin/pip show comfyui_controlnet_aux 2>/dev/null || echo "not found as pip package")
 
 COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
