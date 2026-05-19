@@ -4,9 +4,11 @@ RUN git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux \
     /opt/venv/bin/pip install -r /comfyui/custom_nodes/comfyui_controlnet_aux/requirements.txt && \
     /opt/venv/bin/pip install -e /comfyui/custom_nodes/comfyui_controlnet_aux
 
-# 预下载预处理器模型，消除冷启动时的实时下载
-RUN /opt/venv/bin/python -c "from custom_controlnet_aux.depth_anything_v2 import DepthAnythingV2Detector; DepthAnythingV2Detector.from_pretrained(filename='depth_anything_v2_vitl.pth'); print('DepthAnythingV2 OK')"
-RUN /opt/venv/bin/python -c "from custom_controlnet_aux.hed import HEDdetector; HEDdetector.from_pretrained(); print('HED OK')"
-RUN /opt/venv/bin/python -c "from custom_controlnet_aux.open_pose import OpenposeDetector; OpenposeDetector.from_pretrained(); print('OpenPose OK')"
+# 调试：读取 search_of_assets.py 和 depth_anything_v2.py（根目录版本）
+RUN head -80 /comfyui/custom_nodes/comfyui_controlnet_aux/search_of_assets.py 2>/dev/null || echo "no search_of_assets.py" && \
+    echo "=== root depth_anything_v2.py ===" && \
+    cat /comfyui/custom_nodes/comfyui_controlnet_aux/depth_anything_v2.py 2>/dev/null | head -60 || echo "no root depth_anything_v2.py" && \
+    echo "=== pyproject.toml ===" && \
+    cat /comfyui/custom_nodes/comfyui_controlnet_aux/pyproject.toml 2>/dev/null || echo "no pyproject.toml"
 
 COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
