@@ -1,4 +1,4 @@
-FROM ciellee78/worker-comfyui-kontext:v1
+FROM ciellee78/worker-comfyui-redux:v7
 RUN git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux \
     /comfyui/custom_nodes/comfyui_controlnet_aux && \
     /opt/venv/bin/pip install -r /comfyui/custom_nodes/comfyui_controlnet_aux/requirements.txt
