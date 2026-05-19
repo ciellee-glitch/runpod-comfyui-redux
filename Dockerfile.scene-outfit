@@ -3,7 +3,8 @@ FROM ciellee78/worker-comfyui-redux:v7
 RUN git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux \
     /comfyui/custom_nodes/comfyui_controlnet_aux && \
     /opt/venv/bin/pip install -r /comfyui/custom_nodes/comfyui_controlnet_aux/requirements.txt && \
-    /opt/venv/bin/pip install -e /comfyui/custom_nodes/comfyui_controlnet_aux
+    /opt/venv/bin/pip install -e /comfyui/custom_nodes/comfyui_controlnet_aux && \
+    /opt/venv/bin/pip install onnxruntime-gpu
 
 # 预下载 preprocessor 模型到 ckpts/，避免 cold start 时下载超时
 # custom_hf_download 只下文件，不 torch.load，无内存/CPU 压力
