@@ -4,16 +4,13 @@ RUN git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux \
     /opt/venv/bin/pip install -r /comfyui/custom_nodes/comfyui_controlnet_aux/requirements.txt && \
     /opt/venv/bin/pip install -e /comfyui/custom_nodes/comfyui_controlnet_aux
 
-# 调试：深度查找 depth_anything_v2.py + 读取 search_hf_assets.py 下载路径逻辑
-RUN echo "=== find depth_anything_v2.py ===" && \
-    find /comfyui/custom_nodes/comfyui_controlnet_aux -name "depth_anything_v2.py" 2>/dev/null | sort && \
-    echo "=== src/ all .py files ===" && \
-    find /comfyui/custom_nodes/comfyui_controlnet_aux/src -name "*.py" 2>/dev/null | sort | head -30 && \
-    echo "=== search_hf_assets.py ===" && \
-    head -80 /comfyui/custom_nodes/comfyui_controlnet_aux/search_hf_assets.py && \
-    echo "=== node_wrappers/depth_anything_v2.py ===" && \
-    cat /comfyui/custom_nodes/comfyui_controlnet_aux/node_wrappers/depth_anything_v2.py && \
-    echo "=== node_wrappers/hed.py ===" && \
-    cat /comfyui/custom_nodes/comfyui_controlnet_aux/node_wrappers/hed.py
+# 调试：读取各 detector __init__.py，确认 from_pretrained 使用的 HF repo 和文件名
+RUN AUX=/comfyui/custom_nodes/comfyui_controlnet_aux/src/custom_controlnet_aux && \
+    echo "=== depth_anything_v2/__init__.py ===" && \
+    cat $AUX/depth_anything_v2/__init__.py && \
+    echo "=== hed/__init__.py ===" && \
+    cat $AUX/hed/__init__.py && \
+    echo "=== openpose/__init__.py ===" && \
+    cat $AUX/openpose/__init__.py | head -80
 
 COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
