@@ -22,4 +22,4 @@ jobs:
           context: .
           file: ./Dockerfile.scene-outfit
           push: true
-          tags: ciellee78/worker-comfyui-scene-outfit:v2
+          tags: ciellee78/worker-comfyui-scene-outfit:v3

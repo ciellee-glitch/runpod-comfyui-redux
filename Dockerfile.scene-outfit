@@ -4,6 +4,7 @@ RUN git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux \
     /comfyui/custom_nodes/comfyui_controlnet_aux && \
     /opt/venv/bin/pip install -r /comfyui/custom_nodes/comfyui_controlnet_aux/requirements.txt && \
     /opt/venv/bin/pip install -e /comfyui/custom_nodes/comfyui_controlnet_aux && \
+    /opt/venv/bin/pip uninstall -y onnxruntime onnxruntime-azure && \
     /opt/venv/bin/pip install onnxruntime-gpu
 
 # 预下载 preprocessor 模型到 ckpts/，避免 cold start 时下载超时
