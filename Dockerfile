@@ -20,3 +20,4 @@ RUN python3 -c "c=open('/comfyui/extra_model_paths.yaml').read(); [c:=c.rstrip()
 # base image 已有 0.2.12，必须加 --upgrade 才会更新到 0.3.0
 # 必须用 /opt/venv/bin/pip，否则装到系统 Python，ComfyUI 的 venv 找不到
 RUN /opt/venv/bin/pip install --upgrade comfy-aimdo bitsandbytes
+COPY save_jpeg/ /comfyui/custom_nodes/save_jpeg/
